@@ -1,0 +1,1 @@
+# removedor-de-fondos-img
