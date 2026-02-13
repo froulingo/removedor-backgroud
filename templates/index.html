@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminar Fondo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-2xl font-bold text-center mb-4">Eliminar Fondo de Imagen</h1>
+        <form id="uploadForm" action="/remove-bg/" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*" required
+                class="w-full border border-gray-300 rounded px-3 py-2 mb-4">
+            <button type="submit"
+                class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">
+                Procesar Imagen
+            </button>
+        </form>
+
+        <!-- Mensaje de progreso -->
+        <div id="loading" class="hidden mt-4 text-center">
+            <p class="text-gray-700 mb-2">Procesando imagen, por favor espera...</p>
+            <div class="w-16 h-16 border-4 border-blue-400 border-dashed rounded-full animate-spin mx-auto"></div>
+        </div>
+
+        <!-- Imagen resultante -->
+        <div id="result" class="mt-4 text-center hidden">
+            <p class="text-gray-700 mb-2">Imagen procesada:</p>
+            <a id="downloadLink" href="#" download="no_background.png">
+                <img id="resultImage" src="#" alt="Resultado" class="mx-auto rounded shadow-md">
+            </a>
+            <p class="text-sm text-gray-500 mt-2">Haz clic en la imagen para descargar</p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const loading = document.getElementById('loading');
+        const resultDiv = document.getElementById('result');
+        const resultImage = document.getElementById('resultImage');
+        const downloadLink = document.getElementById('downloadLink');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loading.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+
+            const fileInput = form.querySelector('input[type="file"]');
+            const file = fileInput.files[0];
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/remove-bg/', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                alert("Error al procesar la imagen");
+                loading.classList.add('hidden');
+                return;
+            }
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            resultImage.src = url;
+            downloadLink.href = url;
+            loading.classList.add('hidden');
+            resultDiv.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
