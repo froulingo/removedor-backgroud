@@ -24,7 +24,7 @@ python -m venv env
 pip install -r requirements.txt
 ```
 
-5. ejecutar el main.py de estas manera:
+5. ejecutar el main.py de esta manera:
 ```bash
 uvicorn main:app --reload
 ```
